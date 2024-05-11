@@ -55,6 +55,7 @@ class TestMemoize(unittest.TestCase):
         with unittest.mock.patch.object(test, 'a_method') as mock_respond:
             mock_respond.return_value = test.a_method()
             mock_respond.a_property()
+            mock_respond.a_property()
             mock_respond.assert_called_once()
 
 
