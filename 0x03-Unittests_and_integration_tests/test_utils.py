@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """ Parameterize a unit test """
 import unittest
+from parameterized import parameterized
+from unittest.mock import Mock, patch
+
 from utils import (
     access_nested_map,
     get_json,
     memoize
 )
-from parameterized import parameterized
-from unittest.mock import Mock, patch
 
 
 class TestAccessNestedMap(unittest.TestCase):
@@ -62,7 +63,3 @@ class TestMemoize(unittest.TestCase):
             test.a_property()
             test.a_property()
             mock_res.assert_called_once()
-
-
-if __name__ == '__main__':
-    unittest.main()
