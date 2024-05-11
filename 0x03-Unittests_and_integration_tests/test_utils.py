@@ -49,6 +49,7 @@ class TestMemoize(unittest.TestCase):
     """ Parameterize and patch """
     def test_memoize(self):
         class TestClass:
+            """ Test memoize method """
             def a_method(self):
                 return 42
 
