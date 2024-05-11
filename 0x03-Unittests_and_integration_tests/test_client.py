@@ -36,7 +36,15 @@ class TestGithubOrgClient(unittest.TestCase):
         with patch('client.GithubOrgClient._public_repos_url') as mock:
             mock.return_value = "Answer"
             test_git = GithubOrgClient('test')
-            payload = [item["name"] for item in payloads]
-            self.assertEqual(test_git.public_repos(), payload)
+            expected = [item["name"] for item in payloads]
+            self.assertEqual(test_git.public_repos(), expected)
             json.called_with_once()
             mock.called_with_once()
+
+    @parameterized.expand([
+        ({"license": {"key": "my_license"}}, "my_license", True),
+        ({"license": {"key": "other_license"}}, "my_license", False)
+    ])
+    def test_has_license(self, repo, key, expected):
+        """ unit-test GithubOrgClient.has_license """
+        self.assertEqual(GithubOrgClient.has_license(repo, key), expected)
