@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """ Parameterize a unit test """
 import unittest
-from utils import access_nested_map
+import requests
+from utils import access_nested_map, get_json
 from parameterized import parameterized
+from unittest.mock import Mock, patch
 
 
 class TestAccessNestedMap(unittest.TestCase):
@@ -14,7 +16,7 @@ class TestAccessNestedMap(unittest.TestCase):
         ({"a": {"b": 2}}, ('a', 'b'), 2)
     ])
     def test_access_nested_map(self, nested_map, path, expected):
-        self.assertEquals(access_nested_map(nested_map, path), expected)
+        self.assertEqual(access_nested_map(nested_map, path), expected)
 
     @parameterized.expand([
         ({}, "a"),
