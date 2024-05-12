@@ -3,7 +3,8 @@
 import unittest
 from unittest.mock import patch, PropertyMock
 from client import GithubOrgClient
-from parameterized import parameterized
+from parameterized import parameterized, parameterized_class
+from fixtures import TEST_PAYLOAD
 
 
 class TestGithubOrgClient(unittest.TestCase):
@@ -48,3 +49,50 @@ class TestGithubOrgClient(unittest.TestCase):
     def test_has_license(self, repo, key, expected):
         """ unit-test GithubOrgClient.has_license """
         self.assertEqual(GithubOrgClient.has_license(repo, key), expected)
+
+
+@parameterized_class(
+    ("org_payload", "repos_payload", "expected_repos", "apache2_repos"),
+    TEST_PAYLOAD
+)
+class TestIntegrationGithubOrgClient(unittest.TestCase):
+    """ Test Integration GithubOrgClient """
+
+    repos_payload = None
+    org_payload = None
+
+    @classmethod
+    def setUpClass(cls):
+        """ setUpClass """
+        payloads = {"return_value.json.side_effect": [
+            cls.org_payload, cls.repos_payload,
+            cls.org_payload, cls.repos_payload
+        ]}
+
+        cls.get_patcher = patch('requests.get', **payloads)
+        cls.mock = cls.get_patcher.start()
+
+    def test_public_repo(self):
+        """ test GithubOrgClient.public_repos """
+        test = GithubOrgClient('Github')
+
+        self.assertEqual(test.org, self.org_payload)
+        self.assertEqual(test.repos_payload, self.repos_payload)
+        self.assertEqual(test.public_repos(), self.expected_repos)
+        self.assertEqual(test.public_repos("XLICENSE"), [])
+        self.mock.assert_called()
+
+    def test_public_repos_with_license(self):
+        """ test the public_repos with the argument license="apache-2.0" """
+        test = GithubOrgClient("Github")
+
+        self.assertEqual(test.public_repos(), self.expected_repos)
+        self.assertEqual(test.public_repos("XLICENSE"), [])
+        self.assertEqual(test.public_repos(
+            "apache-2.0"), self.apache2_repos)
+        self.mock.assert_called()
+
+    @classmethod
+    def tearDownClass(cls):
+        """ tearDownClass """
+        cls.get_patcher.stop()
