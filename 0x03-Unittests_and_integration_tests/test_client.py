@@ -8,7 +8,9 @@ from fixtures import TEST_PAYLOAD
 
 
 class TestGithubOrgClient(unittest.TestCase):
-    """ Test that GithubOrgClient.org returns the correct value """
+    """
+    Test that GithubOrgClient.org returns the correct value
+    """
 
     @parameterized.expand([
         'google',
